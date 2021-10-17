@@ -1,8 +1,14 @@
 import discord
+import os
 from discord.ext import commands
 from googlesearch import search
+from dotenv import load_dotenv
+load_dotenv()
+import os
+
 
 bot = commands.Bot(command_prefix=';')
+TOKEN = os.getenv("TOKEN")
 
 @bot.event
 async def on_ready():
@@ -26,4 +32,4 @@ async def find(ctx,arg:int,*, query):
         for j in search(query, tld="co.in", num=5, stop=5, pause=2):
             await ctx.send(f"\n:point_right: {j}") 
 
-bot.run("ODk0MDMxMTQ2NDI4NTM4OTAw.YVkFYw.lzXubZjNH2g9ZJ2YGLSpuE_68rk")
+bot.run(TOKEN)
