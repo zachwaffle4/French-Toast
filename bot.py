@@ -2,12 +2,13 @@
 import discord
 import os
 from discord.ext import commands
+from discord.app import Option
 from googlesearch import search
 from dotenv import load_dotenv
 
 #dotenv my beloved and also the iniatlizing of the bot itself
 load_dotenv()
-bot = commands.Bot(command_prefix=';')
+bot = commands.Bot(command_prefix=["i","I","eye","Eye","EYE"])
 TOKEN = os.getenv("TOKEN")
 
 #tells me the bot is online in the terminal
@@ -15,29 +16,35 @@ TOKEN = os.getenv("TOKEN")
 async def on_ready():
     print("InvictaBot is online!")
 
-#hello command and hello slash command
-@bot.command()
-async def hello(ctx):
-    await ctx.send(f"Hello {ctx.author.mention}!")
-
+#hello command
 @bot.slash_command(guild_ids=[866756514996158474])
-async def hello(ctx):
-    await ctx.send(f"Hello {ctx.author.mention}!")
+async def hello(ctx, name: Option(str, "The person you want to say hello to.", required=False,default=None)):
+    await ctx.respond(f"Hello, {name}!")
 
 #ping command
-@bot.command()
+@bot.slash_command(guild_ids=[866756514996158474])
 async def ping(ctx):
-    await ctx.send("pong")
+    await ctx.respond("pong")
 
 #find command
-@bot.command()
-async def find(ctx,arg:int,*, query):
+'''@bot.slash_command(guild_ids=[866756514996158474])
+async def find(ctx,search: Option(str, "What you want to search for.",required=True,default='test'),amount: Option(int, "The amount of results you want.", required=False,default=5)):
     author = ctx.author.mention
-    await ctx.channel.send(f"Here are the links related to your question {author} !") 
+    await ctx.respond(f"Here are the links related to your question!") 
     async with ctx.typing(): 
-        for j in search(query, tld="co.in", num=arg, stop=arg, pause=2):
-            await ctx.send(f"\n:point_right: {j}") 
-        for j in search(query, tld="co.in", num=5, stop=5, pause=2):
-            await ctx.send(f"\n:point_right: {j}") 
+        for j in search(search, tld="co.in", num=amount, stop=amount, pause=2):
+            await ctx.send(f"\n:point_right: {j}")'''
+
+@bot.slash_command(guild_ids=[866756514996158474])
+async def eye(ctx):
+    await ctx.respond(":eye:")
+
+@bot.command(name="-")
+async def i(ctx):
+    await ctx.send(':eye:-')
+
+@bot.slash_command(guild_ids=[866756514996158474])
+async def marlene(ctx):
+    await ctx.respond(":skull:")
 
 bot.run(TOKEN)
