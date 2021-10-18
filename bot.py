@@ -1,27 +1,35 @@
+#bot.py | imports and stuff 
 import discord
 import os
 from discord.ext import commands
 from googlesearch import search
 from dotenv import load_dotenv
+
+#dotenv my beloved and also the iniatlizing of the bot itself
 load_dotenv()
-import os
-
-
 bot = commands.Bot(command_prefix=';')
 TOKEN = os.getenv("TOKEN")
 
+#tells me the bot is online in the terminal
 @bot.event
 async def on_ready():
     print("InvictaBot is online!")
 
+#hello command and hello slash command
 @bot.command()
 async def hello(ctx):
     await ctx.send(f"Hello {ctx.author.mention}!")
 
+@bot.slash_command(guild_ids=[866756514996158474])
+async def hello(ctx):
+    await ctx.send(f"Hello {ctx.author.mention}!")
+
+#ping command
 @bot.command()
 async def ping(ctx):
     await ctx.send("pong")
 
+#find command
 @bot.command()
 async def find(ctx,arg:int,*, query):
     author = ctx.author.mention
