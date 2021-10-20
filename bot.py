@@ -67,7 +67,7 @@ async def yourmom(ctx):
 
  #help command
 @bot.slash_command(guild_ids=866756514996158474, description="Calls Kevin for help.")
-async def help(ctx):
-    await ctx.respond(<@242490141309009920> we need help!")
+async def help(ctx, need: Option(str, "What you need help with.",required=True,default="with life"):
+    await ctx.respond(f"<@242490141309009920> we need help {need}!")
 
 bot.run(TOKEN)
