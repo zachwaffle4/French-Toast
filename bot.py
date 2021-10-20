@@ -65,5 +65,9 @@ async def yourmom(ctx):
     if x == 3:
         await ctx.respond("https://tenor.com/bID8C.gif")
 
+ #help command
+@bot.slash_command(guild_ids=866756514996158474, description="Calls Kevin for help.")
+async def help(ctx):
+    await ctx.respond(<@242490141309009920> we need help!")
 
 bot.run(TOKEN)
