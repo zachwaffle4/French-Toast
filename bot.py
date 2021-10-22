@@ -2,14 +2,15 @@
 import discord
 import os
 from discord.ext import commands
-from discord.app import Option
+from discord.commands import Option
+from pycord_components import Button
 from googlesearch import search
 from dotenv import load_dotenv
 from random import randint
 
 #dotenv my beloved and also the iniatlizing of the bot itself
 load_dotenv()
-bot = commands.Bot(command_prefix=["i","I","eye","Eye","EYE"])
+bot = discord.Bot()
 TOKEN = os.getenv("TOKEN")
 
 #tells me the bot is online in the terminal
@@ -37,13 +38,8 @@ async def find(ctx,*,search: Option(str, "What you want to search for.",required
 async def eye(ctx):
     await ctx.respond(":eye:")
 
-#invicta's i- finder
-@bot.command(name="-",guild_ids=866756514996158474)
-async def i(ctx):
-    await ctx.send(':eye:')
-
 #invicta's marlene command
-@bot.slash_command(guild_ids=[866756514996158474],description="What does Marlene say?")
+@bot.slash_command(guild_ids=[866756514996158474],description="What does have the team enjoy saying?")
 async def marlene(ctx):
     await ctx.respond(":skull:")
 
@@ -53,7 +49,7 @@ async def ping(ctx):
     await ctx.respond(f'Pong! {bot.latency}')
 
 #invicta's youmom command
-@bot.slash_command(guild_ids=[866756514996158474,899047123415343114],description="What does Marlene say?")
+@bot.slash_command(name="yourmom",guild_ids=[866756514996158474,899047123415343114],description="What does Michelle say?")
 async def yourmom(ctx):
     x = randint(0,4)
     if x == 0:
@@ -65,9 +61,19 @@ async def yourmom(ctx):
     if x == 3:
         await ctx.respond("https://tenor.com/bID8C.gif")
 
- #help command
-@bot.slash_command(guild_ids=866756514996158474, description="Calls Kevin for help.")
-async def help(ctx, need: Option(str, "What you need help with.",required=True,default="with life"):
+#help command
+@bot.slash_command(guild_ids=[866756514996158474], description="Calls Kevin for help.")
+async def help(ctx, need: Option(str, "What you need help with.",required=False,default="with life")):
     await ctx.respond(f"<@242490141309009920> we need help {need}!")
 
+@bot.command(guild_ids=[866756514996158474,899047123415343114])
+async def button(ctx):
+    message = await ctx.send("This message has a button and a reaction 💀",
+    components=[Button(label="this is a button",custom_id="button1")])
+    await message.add_reaction("💀")
+
+    interaction = await bot.wait_for(
+        "button_click", check=lambda inter: inter.custom_id == "button1"
+    )
+    await interaction.respond(content="Button Clicked")
 bot.run(TOKEN)

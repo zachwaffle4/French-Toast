@@ -3,11 +3,12 @@ import discord
 import os
 from discord import channel
 from discord.ext import commands
-from discord.app import Option
+from discord.commands import Option
 from googlesearch import search
 from pycord_components import Button
 from dotenv import load_dotenv
 from random import randint
+from datetime import datetime
 
 #dotenv my beloved and also the iniatlizing of the bot itself
 load_dotenv()
@@ -50,7 +51,7 @@ async def ping(ctx):
     await ctx.respond(f'Pong! {bot.latency}')
 
 #invicta's youmom command
-@bot.slash_command(aliases=["urmum","urmom"],guild_ids=[866756514996158474,899047123415343114],description="What does Marlene say?")
+@bot.slash_command(name="yourmom",guild_ids=[866756514996158474,899047123415343114],description="What does Michelle say?")
 async def yourmom(ctx):
     x = randint(0,4)
     if x == 0:
@@ -69,14 +70,37 @@ event = bot.command_group(
     "event","Commands related to events."
 )
 
-@event.command(guild_ids=[866756514996158474,899047123415343114],description="Creates an event!")
-async def create(ctx, name: Option(str,"The name of the event.", required=True, default="Test"), channel: Option(channel,"The channel you want the event to be posted in.")):
+@bot.command(guild_ids=[866756514996158474,899047123415343114],description="Creates an event!")
+async def event(ctx, name: Option(str,"The name of the event.", required=True, default="Test"), channel: Option(discord.TextChannel,"The channel you want the event to be posted in.",required=True,default=None), date: Option(str, "The date of the event.",required=True,default=None),time: Option(str, "The time of the event.",required=True)):
+    now = datetime.now()
+    await ctx.respond(f"The event has been started in {channel}.")
     await channel.send(
-        f"Would you like to be part of the {name} event? Click the button below if you are interested.", 
-        components=[Button(label="I can join!",custom_id="joinButton")])
+        f"Would you like to be part of the {name} event? Click the button below if you are interested. The event will be hosted on {date} at {time}.", 
+        components=[Button(label="I can join!")])
 
-@bot.event
-async def on_button_click(interaction):
+    interaction = await bot.wait_for("button_click",check=lambda i: i.component.label.startswith("Click"))
     await interaction.respond(content="Button Clicked")
+    
+@bot.command(guild_ids=[899047123415343114])
+async def button(ctx):
+    await ctx.send("This message has a button",
+    components=[Button(label="this is a button",custom_id="button1")])
+
+    interaction = await bot.wait_for(
+        "button_click", check=lambda inter: inter.custom_id == "button1"
+    )
+    await interaction.respond(content="Button Clicked")
+
+#embed testing
+@bot.command(guild_ids=[866756514996158474,899047123415343114],description="Creates an embed!")
+async def create(ctx, title: Option(str, "The title of the embed.",required=True),description: Option(str, "The description of the embed.",required=True)):
+    embed = discord.Embed(title=title,description=description,color=000000)
+    await ctx.respond(embed)
+
+
+#help command
+@bot.slash_command(guild_ids=[866756514996158474], description="Calls Kevin for help.")
+async def help(ctx, need: Option(str, "What you need help with.",required=True,default="with life")):
+    await ctx.respond(f"<@242490141309009920> we need help {need}!")
 
 bot.run(TOKEN)
