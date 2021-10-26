@@ -7,30 +7,29 @@ from pycord_components import Button
 from googlesearch import search
 from dotenv import load_dotenv
 from random import randint
+from PyDictionary import PyDictionary
 
-#dotenv my beloved and also the iniatlizing of the bot itself
+#initializes the bot, the token, and the dictionary
 load_dotenv()
 bot = discord.Bot()
 TOKEN = os.getenv("TOKEN")
+dictionary=PyDictionary()
 
 #tells me the bot is online in the terminal
 @bot.event
 async def on_ready():
     print("InvictaBot is online!")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="you."))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="for / commands."))
 
-#hello command
-@bot.slash_command(guild_ids=[866756514996158474,899047123415343114],description="Says hi to you or someone else!")
-async def hello(ctx, name: Option(str, "The person you want to say hello to.", required=False,default="friend")):
-    await ctx.respond(f"Hello, {name}!")
+
 
 #find command
 @bot.slash_command(guild_ids=[866756514996158474,899047123415343114],description="Searches Google.",alias=["search","google"])
-async def find(ctx,*,search: Option(str, "What you want to search for.",required=True,default='test'),amount: Option(int, "The amount of results you want.", required=False,default=5)):
+async def find(ctx,*,query: Option(str, "What you want to search for.",required=True,default='test'),amount: Option(int, "The amount of results you want.", required=False,default=2)):
     author = ctx.author.mention
     await ctx.respond(f"Here are the links related to your question!") 
     async with ctx.typing(): 
-        for j in search(search, tld="co.in", num=amount, stop=amount, pause=2):
+        for j in search(query, tld="co.in", num=amount, stop=amount, pause=2):
             await ctx.send(f"\n:point_right: {j}")
 
 #eye command
@@ -43,13 +42,8 @@ async def eye(ctx):
 async def marlene(ctx):
     await ctx.respond(":skull:")
 
-#ping command
-@bot.slash_command(guild_ids=[866756514996158474,899047123415343114],description="Tells the ping of the bot.")
-async def ping(ctx):
-    await ctx.respond(f'Pong! {bot.latency}')
-
 #invicta's youmom command
-@bot.slash_command(name="yourmom",guild_ids=[866756514996158474,899047123415343114],description="What does Michelle say?")
+@bot.slash_command(guild_ids=[866756514996158474,899047123415343114],description="What does Marlene say?")
 async def yourmom(ctx):
     x = randint(0,4)
     if x == 0:
@@ -70,10 +64,36 @@ async def help(ctx, need: Option(str, "What you need help with.",required=False,
 async def button(ctx):
     message = await ctx.send("This message has a button and a reaction 💀",
     components=[Button(label="this is a button",custom_id="button1")])
-    await message.add_reaction("💀")
 
     interaction = await bot.wait_for(
         "button_click", check=lambda inter: inter.custom_id == "button1"
     )
     await interaction.respond(content="Button Clicked")
+    await message.add_reaction("💀")
+#ping command
+@bot.slash_command(guild_ids=[866756514996158474,899047123415343114],description="Tells the ping of the bot.")
+async def ping(ctx,bot):
+    await ctx.respond(f'Pong! The bot is currently running {bot.latency} behind.')
+
+#yeetsleep
+@bot.slash_command(guild_ids=[866756514996158474,899047123415343114],description="Makes the person go to bed.")
+async def yeetsleep(ctx,name: Option(str, "The person who needs to go to sleep.",required=True)):
+    await ctx.respond(f"Sleep is good and important, {name}.")
+
+#thesaurus series
+word = bot.command_group("word","Commands related to words.")
+@bot.command(guild_ids=[866756514996158474,899047123415343114],description="Defines the word.")
+async def define(ctx,word: Option(str,"The word you want to define.",required=True)):
+    await ctx.respond(dictionary.meaning(word))
+
+@bot.command(guild_ids=[866756514996158474,899047123415343114],description="Defines the word.")
+async def synonym(ctx,word: Option(str,"The word you want to define.",required=True)):
+    await ctx.respond(dictionary.synonym(word))
+
+@bot.command(guild_ids=[866756514996158474,899047123415343114],description="Defines the word.")
+async def antonym(ctx,word: Option(str,"The word you want to define.",required=True)):
+    await ctx.respond(dictionary.antonym(word))
+
+bot.load_extension("cogs.utility")  # <--- This single line of code to be precise
+
 bot.run(TOKEN)
