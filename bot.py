@@ -6,14 +6,25 @@ from discord.commands import Option
 from pycord_components import Button
 from googlesearch import search
 from dotenv import load_dotenv
-from random import randint
+from random import *
 from PyDictionary import PyDictionary
+import giphy_client
+from giphy_client.rest import ApiException
+from pprint import pprint
 
-#initializes the bot, the token, and the dictionary
+#initializes the bot, the token, the dictionary, giphy, 
 load_dotenv()
 bot = discord.Bot()
 TOKEN = os.getenv("TOKEN")
+GIPHY = os.getenv("GIPHY")
 dictionary=PyDictionary()
+api_instance = giphy_client.DefaultApi()
+config = {
+    'api_key': GIPHY,  # Giphy API Key,
+    'limit': 1,
+    'rating': 'g'
+}
+
 
 #tells me the bot is online in the terminal
 @bot.event
@@ -43,17 +54,12 @@ async def marlene(ctx):
     await ctx.respond(":skull:")
 
 #invicta's youmom command
-@bot.slash_command(guild_ids=[866756514996158474,899047123415343114],description="What does Marlene say?")
+'''@bot.slash_command(guild_ids=[866756514996158474,899047123415343114],description="What does Marlene say?")
 async def yourmom(ctx):
-    x = randint(0,4)
-    if x == 0:
-        await ctx.respond("Your mother.")
-    if x == 1:
-        await ctx.respond("ur mum")
-    if x == 2: 
-        await ctx.respond("haha L")
-    if x == 3:
-        await ctx.respond("https://tenor.com/bID8C.gif")
+    choiceyourmom = ["Your mother.","ur mum","haha L","https://tenor.com/bID8C.gif"]
+    responseyourmom = randint(0,len(choiceyourmom))
+    resultyourmom=choiceyourmom(responseyourmom)
+    ctx.respond(resultyourmom)'''
 
 #help command
 @bot.slash_command(guild_ids=[866756514996158474], description="Calls Kevin for help.")
@@ -87,13 +93,21 @@ async def define(ctx,word: Option(str,"The word you want to define.",required=Tr
     await ctx.respond(dictionary.meaning(word))
 
 @bot.command(guild_ids=[866756514996158474,899047123415343114],description="Defines the word.")
-async def synonym(ctx,word: Option(str,"The word you want to define.",required=True)):
+async def synonym(ctx,word: Option(str,"The word you want the synonym.",required=True)):
     await ctx.respond(dictionary.synonym(word))
 
 @bot.command(guild_ids=[866756514996158474,899047123415343114],description="Defines the word.")
-async def antonym(ctx,word: Option(str,"The word you want to define.",required=True)):
+async def antonym(ctx,word: Option(str,"The word you want the opposite of.",required=True)):
     await ctx.respond(dictionary.antonym(word))
 
 bot.load_extension("cogs.utility")  # <--- This single line of code to be precise
+print(dictionary.antonym("test"))
+
+@bot.command(name='8ball',guild_ids=[866756514996158474,899047123415343114],description="Asks the Magic 8 Ball a question.")
+async def eightBall(ctx,question: Option(str,"What you want to ask the 8ball.")):
+    response8ball =['Without a doubt.','Outlook good.','Better not tell you now.','Cannot predict now.','My reply is no.','Outlook not so good.']
+    choice=randint(0,len(response8ball))
+    result=response8ball(choice)
+    await ctx.respond(result)
 
 bot.run(TOKEN)
