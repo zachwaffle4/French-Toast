@@ -1,40 +1,34 @@
 #bot.py | imports and stuff 
 import discord
 import os
+from discord import channel
 from discord.ext import commands
 from discord.commands import Option
-from pycord_components import Button
 from googlesearch import search
 from dotenv import load_dotenv
-from random import *
-from PyDictionary import PyDictionary
-import giphy_client
-from giphy_client.rest import ApiException
-from pprint import pprint
+from random import randint, choice
+from datetime import datetime
 
-#initializes the bot, the token, the dictionary, giphy, 
+#dotenv my beloved and also the iniatlizing of the bot itself
 load_dotenv()
-bot = discord.Bot()
+bot = discord.Bot(debug_guilds=[866756514996158474,899047123415343114,992568762840653897])
 TOKEN = os.getenv("TOKEN")
-GIPHY = os.getenv("GIPHY")
-dictionary=PyDictionary()
-api_instance = giphy_client.DefaultApi()
-config = {
-    'api_key': GIPHY,  # Giphy API Key,
-    'limit': 1,
-    'rating': 'g'
-}
 
-
+#readying and installation
 #tells me the bot is online in the terminal
 @bot.event
 async def on_ready():
-    print("InvictaBot is online!")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="for / commands."))
+    print("Lucky Charm is online!")
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="you."))
 
-#place the cog files into the bot
-bot.load_extension("cogs.utility")
-bot.load_extension("cogs.fun")
+@bot.command(description="Sends the bot's latency.")
+async def ping(ctx):
+    await ctx.respond(f"Pong! Latency is {bot.latency}")
 
-#run the bot
+@bot.command(description="Asks an anonymous question to staff.")
+async def ask(ctx,question: Option(str, "Enter your question.")):
+    await ctx.respond(f"Your question ({question}) has been sent to staff.",ephemeral=True)
+    channel = bot.get_channel(992569868509520002)
+    await channel.send(f"{ctx.author} has sent a question reading {question}.")
+
 bot.run(TOKEN)
