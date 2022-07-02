@@ -9,6 +9,23 @@ from dotenv import load_dotenv
 from random import randint, choice
 from datetime import datetime
 
+
+from flask import Flask
+from threading import Thread
+
+app = Flask('')
+
+@app.route('/')
+def main():
+  return "Your Bot Is Ready"
+
+def run():
+  app.run(host="0.0.0.0", port=8000)
+
+def keep_alive():
+  server = Thread(target=run)
+  server.start()
+  
 #dotenv my beloved and also the iniatlizing of the bot itself
 load_dotenv()
 bot = discord.Bot(debug_guilds=[866756514996158474,899047123415343114,992568762840653897])
