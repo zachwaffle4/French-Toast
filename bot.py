@@ -21,7 +21,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 #tells me the bot is online in the terminal
 @bot.event
 async def on_ready():
-    print("Lucky Charm is online!")
+    print("French Toast is online!")
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="you."))
 
 @bot.command(description="Sends the bot's latency.")
